@@ -154,7 +154,7 @@ git clone https://github.com/KULLANICI_ADINIZ/yks-biyoloji-atlas.git
 cd yks-biyoloji-atlas
 
 # 3. Ana repo'yu upstream olarak ekleyin
-git remote add upstream https://github.com/HARGET/yks-biyoloji-atlas.git
+git remote add upstream https://github.com/alperenacr/yks-biyoloji-atlas.git
 
 # 4. Bağımlılıkları yükleyin
 flutter pub get
@@ -219,7 +219,7 @@ HARGET Mobil Birimi olarak düzenli ve organize bir geliştirme süreci izliyoru
 #### 1. Fork Oluşturma (İlk Kez)
 
 ```bash
-# GitHub'da HARGET/yks-biyoloji-atlas reposuna gidin
+# GitHub'da alperenacr/yks-biyoloji-atlas reposuna gidin
 # Sağ üstteki "Fork" butonuna tıklayın
 # Kendi hesabınıza fork'layın
 ```
@@ -232,14 +232,14 @@ git clone https://github.com/KULLANICI_ADINIZ/yks-biyoloji-atlas.git
 cd yks-biyoloji-atlas
 
 # Ana repo'yu upstream olarak ekleyin
-git remote add upstream https://github.com/HARGET/yks-biyoloji-atlas.git
+git remote add upstream https://github.com/alperenacr/yks-biyoloji-atlas.git
 
 # Remote'ları kontrol edin
 git remote -v
 # origin    https://github.com/KULLANICI_ADINIZ/yks-biyoloji-atlas.git (fetch)
 # origin    https://github.com/KULLANICI_ADINIZ/yks-biyoloji-atlas.git (push)
-# upstream  https://github.com/HARGET/yks-biyoloji-atlas.git (fetch)
-# upstream  https://github.com/HARGET/yks-biyoloji-atlas.git (push)
+# upstream  https://github.com/alperenacr/yks-biyoloji-atlas.git (fetch)
+# upstream  https://github.com/alperenacr/yks-biyoloji-atlas.git (push)
 ```
 
 #### 3. Yeni Özellik Geliştirme
@@ -488,7 +488,7 @@ Bu proje HARGET'e aittir ve MIT licence kullanılmıştır
 
 | Kanal | Link |
 |-------|------|
-| **GitHub Issues** | [Yeni Issue Aç](https://github.com/HARGET/yks-biyoloji-atlas/issues) |
+| **GitHub Issues** | [Yeni Issue Aç](https://github.com/alperenacr/yks-biyoloji-atlas/issues) |
 | **Proje Yöneticileri** | @desircim, @alperenacr |
 
 ---
