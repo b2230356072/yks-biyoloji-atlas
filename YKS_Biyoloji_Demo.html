@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YKS İnteraktif Biyoloji Atlası — UI Demo</title>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css"/>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --green:       #4E6035;
+    --green-light: #7A9452;
+    --green-pale:  #C8D9A8;
+    --cream:       #F2EBD9;
+    --cream-dark:  #E5D9C0;
+    --white:       #FFFFFF;
+    --text:        #2A2A2A;
+    --text-sec:    #6B6B6B;
+    --border:      #D8CFBA;
+    --red:         #C0392B;
+    --blue:        #2980B9;
+    --gold:        #E8A838;
+  }
+
+  body {
+    background: #1A1E14;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  i.ph { vertical-align: middle; line-height: 1; }
+
+  /* ── HEADER ── */
+  .page-header {
+    text-align: center;
+    padding: 56px 24px 40px;
+    background: linear-gradient(180deg, #1A1E14 0%, #222B18 100%);
+  }
+  .page-header .logo-badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--green); border-radius: 50px;
+    padding: 8px 20px; margin-bottom: 20px;
+  }
+  .page-header .logo-badge i { color: #fff; font-size: 16px; }
+  .page-header .logo-badge span { color: #fff; font-size: 13px; font-weight: 600; letter-spacing: .5px; }
+  .page-header h1 { color: #fff; font-size: 32px; font-weight: 700; line-height: 1.2; margin-bottom: 10px; }
+  .page-header p { color: #9BA88A; font-size: 15px; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    text-align: center; padding: 40px 0 20px;
+    color: #9BA88A; font-size: 11px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+  }
+
+  /* ── SCREENS GRID ── */
+  .screens-row {
+    display: flex; gap: 28px;
+    justify-content: center; flex-wrap: wrap;
+    padding: 0 40px 20px;
+  }
+
+  /* ── PHONE FRAME ── */
+  .phone {
+    flex-shrink: 0; width: 260px;
+    background: #111; border-radius: 40px; padding: 12px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.6), 0 0 0 1px #333;
+  }
+  .phone-label {
+    text-align: center; color: #6B7A58;
+    font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-top: 14px;
+  }
+  .phone-inner {
+    background: var(--cream); border-radius: 30px;
+    overflow: hidden; position: relative;
+  }
+  .phone-notch {
+    height: 28px; background: #111;
+    display: flex; align-items: center; justify-content: center; position: relative;
+  }
+  .phone-notch::after {
+    content: ''; width: 80px; height: 16px;
+    background: #111; border-radius: 0 0 12px 12px;
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  }
+  .phone-status {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 16px 0; font-size: 9px; color: var(--text-sec); font-weight: 600;
+    background: var(--cream);
+  }
+  .screen-body { min-height: 480px; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    display: flex; background: #fff; border-top: 1px solid var(--border);
+    padding: 6px 4px 10px;
+  }
+  .bottom-nav .nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    font-size: 8px; color: var(--text-sec); cursor: pointer; position: relative;
+  }
+  .bottom-nav .nav-item.active { color: var(--green); }
+  .bottom-nav .nav-item.active::before {
+    content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+    width: 28px; height: 3px; background: var(--green); border-radius: 0 0 3px 3px;
+  }
+  .bottom-nav .nav-item i { font-size: 17px; display: block; }
+
+  /* ── UTILITY ── */
+  .green-header { background: var(--green); padding: 16px 16px 20px; color: #fff; }
+  .green-header h2 { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+  .green-header p  { font-size: 10px; opacity: .8; margin-top: 2px; }
+  .card {
+    background: var(--white); border-radius: 14px; padding: 12px 14px; margin: 10px 12px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+  .card-title { font-size: 10px; font-weight: 700; color: var(--text-sec); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; display: flex; align-items: center; gap: 4px; }
+  .pill {
+    display: inline-block; background: var(--green-pale);
+    color: var(--green); border-radius: 50px;
+    font-size: 9px; font-weight: 600; padding: 3px 8px;
+  }
+  .progress-bar { background: var(--cream-dark); border-radius: 50px; height: 6px; overflow: hidden; margin-top: 4px; }
+  .progress-fill { background: var(--green); border-radius: 50px; height: 100%; }
+  .btn-primary {
+    display: block; width: calc(100% - 24px); margin: 12px auto;
+    background: var(--green); color: #fff; border: none; border-radius: 12px;
+    padding: 11px; font-size: 12px; font-weight: 700; text-align: center; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .input-field {
+    width: 100%; background: var(--cream-dark); border: none; border-radius: 10px;
+    padding: 10px 12px; font-size: 11px; color: var(--text); margin-bottom: 8px;
+  }
+  .row { display: flex; align-items: center; gap: 8px; }
+  .icon-circle {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--green-pale); display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0; color: var(--green);
+  }
+
+  /* ── SIGN IN ── */
+  .signin-hero {
+    background: var(--cream); padding: 20px 20px 16px; text-align: center;
+  }
+  .signin-hero .app-ring {
+    width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 14px;
+    background: var(--green); display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 8px var(--green-pale), 0 0 0 14px rgba(200,217,168,.3);
+  }
+  .signin-hero .app-ring i { font-size: 36px; color: #fff; }
+  .signin-hero h2 { color: var(--text); font-size: 16px; font-weight: 700; }
+  .signin-hero p  { color: var(--text-sec); font-size: 10px; margin-top: 4px; }
+  .campaign-badge {
+    background: var(--gold); border-radius: 8px; padding: 8px 14px; margin: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .campaign-badge .badge-text { font-size: 10px; font-weight: 600; color: #5A3A00; }
+  .social-btn {
+    display: flex; align-items: center; gap: 10px;
+    width: calc(100% - 24px); margin: 6px auto;
+    background: #fff; border: 1.5px solid var(--border); border-radius: 12px;
+    padding: 10px 14px; font-size: 11px; font-weight: 600; color: var(--text);
+  }
+  .social-btn i { font-size: 16px; }
+  .terms-text { text-align: center; font-size: 8px; color: var(--text-sec); padding: 10px 16px; line-height: 1.5; }
+
+  /* ── ONBOARDING ── */
+  .onboard-hero {
+    background: var(--cream); padding: 20px 20px 10px; text-align: center;
+  }
+  .onboard-illustration {
+    width: 120px; height: 120px; margin: 0 auto 14px;
+    background: var(--green-pale); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; color: var(--green);
+  }
+  .onboard-illustration i { font-size: 54px; }
+  .onboard-hero h2 { color: var(--text); font-size: 15px; font-weight: 700; line-height: 1.3; }
+  .onboard-hero p  { color: var(--text-sec); font-size: 10px; margin-top: 6px; line-height: 1.5; }
+  .page-dots { display: flex; gap: 5px; justify-content: center; margin: 10px 0; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); }
+  .dot.active { background: var(--green); width: 18px; border-radius: 3px; }
+  .onboard-feature {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 10px;
+    background: #fff;
+  }
+  .onboard-feature:first-of-type { border-top: 1px solid var(--border); }
+  .onboard-feature:last-of-type { border-bottom: none; }
+  .onboard-feature strong { display: block; font-size: 11px; margin-bottom: 1px; }
+  /* bottom nav with back/next like Figma */
+  .onboard-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 14px; border-top: 1px solid var(--border); background: #fff;
+  }
+  .back-nav-btn {
+    width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center; color: var(--text-sec); font-size: 16px;
+  }
+  .skip-btn { font-size: 10px; color: var(--text-sec); font-weight: 600; }
+  .next-btn { background: var(--green); color: #fff; border-radius: 50px; padding: 8px 18px; font-size: 10px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+  .next-btn i { font-size: 12px; }
+
+  /* ── HOME ── */
+  .home-greeting {
+    background: var(--green); padding: 16px 16px 14px; color: #fff;
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .home-greeting h2 { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+  .home-greeting p  { font-size: 10px; opacity: .75; margin-top: 2px; }
+  .home-greeting .avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: #fff;
+  }
+  .progress-card {
+    background: linear-gradient(135deg, #4A5C2F, #5E7538);
+    border-radius: 14px; padding: 12px 14px; margin: 10px 12px 0; color: #fff;
+  }
+  .progress-card .pc-label { font-size: 9px; opacity: .75; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; display: flex; align-items: center; gap: 4px; }
+  .progress-card .pc-value { font-size: 22px; font-weight: 700; margin: 2px 0; }
+  .progress-card .pc-bar { background: rgba(255,255,255,.2); border-radius: 50px; height: 5px; margin-top: 6px; overflow: hidden; }
+  .progress-card .pc-fill { background: var(--green-pale); border-radius: 50px; height: 100%; }
+  .chips-row { display: flex; overflow-x: auto; gap: 8px; padding: 6px 12px 10px; }
+  .chips-row::-webkit-scrollbar { display: none; }
+  .topic-chip {
+    background: #fff; border-radius: 12px; padding: 10px 12px;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06); flex-shrink: 0; min-width: 110px;
+  }
+  .topic-chip .tc-icon { font-size: 20px; color: var(--green); }
+  .topic-chip .tc-label { font-size: 10px; font-weight: 600; line-height: 1.3; }
+  .topic-chip .tc-sub   { font-size: 9px; color: var(--text-sec); }
+  .section-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 12px 4px; }
+  .section-header span { font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+  .section-header a    { font-size: 10px; color: var(--green); font-weight: 600; }
+  .quick-btn {
+    flex: 1; background: #fff; border-radius: 10px; padding: 8px 6px;
+    text-align: center; font-size: 9px; font-weight: 700; color: var(--green);
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+  .quick-btns-row { display: flex; gap: 6px; margin: 0 12px; }
+
+  /* ── EXPLORE ── */
+  .explore-search {
+    display: flex; align-items: center; gap: 8px;
+    background: #fff; border-radius: 12px; padding: 9px 12px;
+    margin: 10px 12px 0; box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  }
+  .explore-search i { color: var(--text-sec); font-size: 16px; }
+  .explore-search input { border: none; outline: none; background: transparent; font-size: 11px; flex: 1; }
+
+  /* Segmented tab control — Figma style */
+  .tab-bar { padding: 10px 12px 0; }
+  .tab-seg {
+    display: flex; background: var(--cream-dark); border-radius: 10px;
+    padding: 3px; gap: 2px;
+  }
+  .tab-item {
+    flex: 1; text-align: center; padding: 7px 8px; font-size: 10px; font-weight: 600;
+    border-radius: 8px; color: var(--text-sec);
+    display: flex; align-items: center; justify-content: center; gap: 4px; transition: all .15s;
+  }
+  .tab-item i { font-size: 13px; }
+  .tab-item.active {
+    background: var(--green); color: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,.2);
+  }
+  .grade-section { margin: 8px 12px 0; }
+  .grade-header {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff; border-radius: 12px; padding: 11px 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+  }
+  .grade-header.open { border-radius: 12px 12px 0 0; box-shadow: none; border-bottom: 1px solid var(--border); }
+  .grade-header .grade-title { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; }
+  .grade-header .grade-title i { font-size: 15px; color: var(--green-light); }
+  .grade-header > i { color: var(--text-sec); font-size: 13px; }
+  .grade-header.open > i { color: var(--green); }
+  .grade-topics { background: #fff; border-radius: 0 0 12px 12px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,.07); }
+  .topic-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 14px; border-bottom: 1px solid #F0EBE0; font-size: 11px;
+  }
+  .topic-row:last-child { border-bottom: none; }
+  .topic-row .t-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green-pale); flex-shrink: 0; }
+  .topic-row .t-dot.active { background: var(--green); }
+  .topic-row .t-name { flex: 1; }
+  .topic-row i { color: var(--green); font-size: 13px; }
+
+  /* ── TOPIC DETAIL ── */
+  .topic-detail-header {
+    background: var(--green); padding: 12px 14px 14px; color: #fff;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .back-btn { font-size: 20px; opacity: .85; color: #fff; }
+  .topic-svg-preview {
+    background: linear-gradient(135deg, #EEF4E0, #DDE8C4);
+    margin: 10px 12px 0; border-radius: 14px; height: 130px;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px dashed var(--green-pale); position: relative; overflow: hidden;
+  }
+  .topic-svg-preview .svg-label {
+    position: absolute; top: 8px; left: 12px;
+    background: var(--green); color: #fff; border-radius: 6px;
+    padding: 2px 7px; font-size: 8px; font-weight: 700;
+  }
+  .cell-pin {
+    position: absolute; font-size: 9px; font-weight: 600; color: var(--green);
+    background: rgba(255,255,255,.85); border-radius: 4px; padding: 1px 4px; white-space: nowrap;
+  }
+  .mode-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: #fff; border-radius: 12px; padding: 10px 12px; margin: 6px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06); border-left: 3px solid var(--green);
+  }
+  .mode-btn .mb-icon { font-size: 18px; color: var(--green); }
+  .mode-btn .mb-info .mb-title { font-size: 11px; font-weight: 700; }
+  .mode-btn .mb-info .mb-sub   { font-size: 9px; color: var(--text-sec); }
+  .mode-btn .mb-arrow { margin-left: auto; color: var(--text-sec); font-size: 14px; }
+  .modes-grid { padding: 0 12px; }
+
+  /* ── QUIZ ── */
+  .quiz-top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px 8px; background: #fff; border-bottom: 1px solid var(--border);
+  }
+  .quiz-close { font-size: 18px; color: var(--text-sec); }
+  .quiz-counter { font-size: 11px; font-weight: 700; color: var(--green); }
+  .quiz-timer { font-size: 11px; color: var(--text-sec); font-weight: 600; display: flex; align-items: center; gap: 3px; }
+  .quiz-timer i { font-size: 13px; }
+  .quiz-progress { height: 4px; background: var(--cream-dark); }
+  .quiz-progress .qp-fill { background: var(--green); height: 4px; }
+  .quiz-mode-label { padding: 8px 14px 4px; font-size: 11px; font-weight: 700; color: var(--text-sec); display: flex; align-items: center; gap: 5px; }
+  .quiz-mode-label i { font-size: 14px; color: var(--green); }
+  .quiz-canvas {
+    background: linear-gradient(135deg, #EEF4E0, #DDE8C4);
+    margin: 10px 12px; border-radius: 14px; height: 160px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .blur-tag {
+    position: absolute; background: rgba(255,255,255,.4);
+    backdrop-filter: blur(6px); border-radius: 6px;
+    font-size: 9px; font-weight: 600; padding: 3px 7px; color: transparent;
+    text-shadow: 0 0 8px rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.6);
+    cursor: pointer;
+  }
+  .blur-tag.revealed { color: var(--green); text-shadow: none; backdrop-filter: none; background: rgba(255,255,255,.9); }
+  .glow-tag {
+    position: absolute; border: 2px solid #F0C040;
+    box-shadow: 0 0 12px 4px rgba(240,192,64,.5);
+    border-radius: 50%; width: 36px; height: 36px;
+    animation: pulse 1.5s ease-in-out infinite;
+    display: flex; align-items: center; justify-content: center;
+    color: #E8A838; font-size: 16px;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 12px 4px rgba(240,192,64,.5); }
+    50%      { box-shadow: 0 0 20px 8px rgba(240,192,64,.8); }
+  }
+  .pin-marker { font-size: 20px; position: absolute; cursor: pointer; color: var(--red); filter: drop-shadow(0 2px 4px rgba(0,0,0,.3)); }
+  .mcq-options { padding: 0 12px; }
+  .mcq-option {
+    display: flex; align-items: center; gap: 10px;
+    background: #fff; border-radius: 10px; padding: 10px 12px; margin-bottom: 6px;
+    font-size: 11px; font-weight: 600; border: 1.5px solid var(--border); cursor: pointer;
+  }
+  .mcq-option.correct { border-color: var(--green); background: #F0F7E8; }
+  .mcq-option .opt-letter {
+    width: 22px; height: 22px; border-radius: 50%; background: var(--cream-dark);
+    display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0;
+  }
+  .mcq-option.correct .opt-letter { background: var(--green); color: #fff; }
+  .drag-labels { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; }
+  .drag-label {
+    background: #fff; border: 1.5px solid var(--border); border-radius: 8px;
+    padding: 5px 10px; font-size: 10px; font-weight: 600; cursor: grab;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .drag-label.placed { background: var(--green-pale); border-color: var(--green); color: var(--green); }
+  .drag-label i { font-size: 12px; }
+  .drop-zone {
+    position: absolute; border: 2px dashed var(--green); border-radius: 8px;
+    background: rgba(78,96,53,.1); font-size: 9px; font-weight: 600; color: var(--green);
+    display: flex; align-items: center; justify-content: center; padding: 4px;
+    min-width: 50px; min-height: 22px;
+  }
+  .drop-zone.filled { border-style: solid; background: rgba(78,96,53,.15); }
+  .quiz-hint { font-size: 10px; color: var(--text-sec); text-align: center; padding: 6px 16px; line-height: 1.5; display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .quiz-hint i { font-size: 13px; color: var(--green); flex-shrink: 0; }
+
+  /* ── FLOW ── */
+  .flow-node {
+    background: #fff; border-radius: 10px; padding: 8px 14px;
+    margin: 0 auto 4px; width: 75%; font-size: 10px; font-weight: 600; text-align: center;
+    border: 1.5px solid var(--border);
+  }
+  .flow-node.empty { border-style: dashed; border-color: var(--green); background: rgba(78,96,53,.06); color: var(--green); }
+  .flow-node.pending { border-style: dashed; border-color: #E67E22; background: rgba(230,126,34,.06); color: #E67E22; }
+  .flow-arrow { text-align: center; font-size: 16px; color: var(--green-light); margin: 2px 0; display: flex; justify-content: center; }
+  .flow-arrow i { font-size: 16px; }
+  .flow-body { padding: 10px 12px; }
+  .flow-option {
+    display: flex; align-items: center; gap: 8px;
+    background: #fff; border-radius: 10px; padding: 8px 12px; margin-bottom: 6px;
+    font-size: 10px; font-weight: 600; border: 1.5px solid var(--border);
+  }
+  .flow-option .radio { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; }
+  .flow-option.selected { border-color: var(--green); }
+  .flow-option.selected .radio { border-color: var(--green); background: var(--green); }
+
+  /* ── PROGRESS ── */
+  .stat-cards { display: flex; gap: 6px; margin: 10px 12px 0; }
+  .stat-card {
+    flex: 1; background: #fff; border-radius: 12px; padding: 10px 8px; text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+  .stat-card .s-icon { color: var(--green); font-size: 20px; margin-bottom: 2px; }
+  .stat-card .s-val  { font-size: 18px; font-weight: 700; color: var(--green); }
+  .stat-card .s-lbl  { font-size: 8px; color: var(--text-sec); margin-top: 2px; line-height: 1.3; }
+  .chart-bar-row { display: flex; align-items: flex-end; gap: 6px; padding: 8px 12px; height: 70px; }
+  .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end; }
+  .chart-bar { width: 100%; background: var(--green); border-radius: 4px 4px 0 0; min-height: 4px; }
+  .chart-bar.low { background: var(--green-pale); }
+  .chart-day { font-size: 8px; color: var(--text-sec); }
+  .kpi-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid var(--border); }
+  .kpi-row:last-child { border-bottom: none; }
+  .kpi-name { flex: 1; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+  .kpi-name i { font-size: 13px; }
+  .kpi-pct { font-size: 11px; font-weight: 700; color: var(--green); min-width: 32px; text-align: right; }
+  .kpi-pct.warn { color: var(--gold); }
+  .kpi-bar-bg { width: 70px; background: var(--cream-dark); border-radius: 50px; height: 5px; overflow: hidden; }
+  .kpi-bar-fill { background: var(--green); height: 5px; border-radius: 50px; }
+  .kpi-bar-fill.warn { background: var(--gold); }
+  .badge-row { display: flex; gap: 8px; padding: 10px 14px; }
+  .badge-item { text-align: center; }
+  .badge-item .badge-icon { font-size: 24px; color: var(--green); }
+  .badge-item .badge-icon.locked { color: var(--border); }
+  .badge-item .badge-name { font-size: 8px; color: var(--text-sec); margin-top: 3px; }
+
+  /* ── PROFILE ── */
+  .profile-hero {
+    background: linear-gradient(160deg, var(--green), #3A4D25);
+    padding: 20px 16px 30px; text-align: center; color: #fff; position: relative;
+  }
+  .profile-avatar {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: rgba(255,255,255,.2); margin: 0 auto 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 28px; color: #fff;
+    border: 3px solid rgba(255,255,255,.4);
+  }
+  .profile-avatar i { font-size: 28px; }
+  .profile-hero h2 { font-size: 16px; font-weight: 700; }
+  .profile-hero p  { font-size: 10px; opacity: .75; margin-top: 3px; }
+  .profile-edit-btn {
+    position: absolute; top: 14px; right: 14px;
+    background: rgba(255,255,255,.2); border-radius: 8px; padding: 5px 10px;
+    font-size: 10px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 4px;
+  }
+  .profile-edit-btn i { font-size: 12px; }
+  .profile-stats {
+    display: flex; background: #fff; border-radius: 14px;
+    margin: -14px 12px 0; box-shadow: 0 4px 16px rgba(0,0,0,.1); overflow: hidden;
+  }
+  .profile-stat { flex: 1; text-align: center; padding: 12px 8px; border-right: 1px solid var(--border); }
+  .profile-stat:last-child { border-right: none; }
+  .profile-stat .ps-val { font-size: 16px; font-weight: 700; color: var(--green); }
+  .profile-stat .ps-lbl { font-size: 8px; color: var(--text-sec); margin-top: 2px; }
+  .settings-group { margin: 12px 12px 0; }
+  .settings-label { font-size: 9px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; padding-left: 4px; }
+  .settings-item {
+    display: flex; align-items: center; gap: 10px;
+    background: #fff; padding: 10px 14px;
+    border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 500;
+  }
+  .settings-item:first-of-type { border-radius: 12px 12px 0 0; }
+  .settings-item:last-of-type  { border-radius: 0 0 12px 12px; border-bottom: none; }
+  .settings-item .si-icon { font-size: 16px; width: 26px; text-align: center; color: var(--text-sec); }
+  .settings-item .si-arrow { margin-left: auto; color: var(--text-sec); font-size: 14px; }
+  .toggle { width: 28px; height: 16px; border-radius: 8px; margin-left: auto; position: relative; flex-shrink: 0; }
+  .toggle.on  { background: var(--green); }
+  .toggle.off { background: var(--border); }
+  .toggle::after {
+    content: ''; width: 12px; height: 12px; border-radius: 50%; background: #fff;
+    position: absolute; top: 2px; box-shadow: 0 1px 3px rgba(0,0,0,.2); transition: left .2s;
+  }
+  .toggle.on::after  { left: 14px; }
+  .toggle.off::after { left: 2px; }
+
+  /* ── TEST CONFIG ── */
+  .toggle-group { display: flex; gap: 6px; margin: 6px 0; }
+  .toggle-chip {
+    flex: 1; text-align: center; padding: 8px 6px; border-radius: 10px;
+    font-size: 10px; font-weight: 700; border: 1.5px solid var(--border); background: #fff;
+  }
+  .toggle-chip.active { background: var(--green); color: #fff; border-color: var(--green); }
+  .num-options { display: flex; gap: 4px; }
+  .num-chip {
+    flex: 1; text-align: center; padding: 7px 4px; border-radius: 8px;
+    font-size: 10px; font-weight: 700; background: var(--cream-dark); color: var(--text-sec);
+  }
+  .num-chip.active { background: var(--green); color: #fff; }
+  .check-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; font-size: 11px; border-bottom: 1px solid var(--border); }
+  .check-row:last-of-type { border-bottom: none; }
+  .checkbox { width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .checkbox.checked { background: var(--green); }
+  .checkbox.checked i { color: #fff; font-size: 11px; }
+  .checkbox.unchecked { border: 2px solid var(--border); }
+
+  /* ── FOOTER ── */
+  .page-footer {
+    text-align: center; padding: 48px 24px 60px;
+    color: #6B7A58; font-size: 12px;
+    border-top: 1px solid #2A3020; margin-top: 40px;
+  }
+  .page-footer strong { color: #9BA88A; }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #3A4530; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     PAGE HEADER
+═══════════════════════════════════ -->
+<div class="page-header">
+  <div class="logo-badge">
+    <i class="ph ph-dna"></i>
+    <span>YKS İnteraktif Biyoloji Atlası</span>
+  </div>
+  <h1>UI Ön Gösterim</h1>
+  <p>Tüm ekranlar &nbsp;·&nbsp; Navigasyon akışı &nbsp;·&nbsp; Etkileşim modları</p>
+</div>
+
+<!-- ═══════════════════════════════════
+     SECTION 1 — ONBOARDING & AUTH
+═══════════════════════════════════ -->
+<div class="section-label">Giriş &amp; Tanıtım</div>
+<div class="screens-row">
+
+  <!-- SIGN IN -->
+  <div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="phone-notch"></div>
+        <div class="phone-status"><span>9:41</span><span>● ● ●</span></div>
+        <div class="screen-body">
+          <div class="signin-hero">
+            <div class="app-ring"><i class="ph ph-dna"></i></div>
+            <h2>YKS Biyoloji Navigasyon</h2>
+            <p>Biyolojiyi interaktif olarak öğren</p>
+          </div>
+          <div style="padding:14px 14px 0">
+            <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text)">Hesap Oluştur</div>
+            <input class="input-field" placeholder="E-posta adresi" style="display:block">
+            <input class="input-field" placeholder="Şifre" type="password" style="display:block">
+          </div>
+          <div class="btn-primary" style="margin-top:8px">
+            <i class="ph ph-sign-in"></i> Giriş Yap
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 14px">
+            <div style="flex:1;height:1px;background:var(--border)"></div>
+            <span style="font-size:9px;color:var(--text-sec)">veya</span>
+            <div style="flex:1;height:1px;background:var(--border)"></div>
+          </div>
+          <div class="social-btn" style="background:var(--green);color:#fff;border-color:var(--green)">
+            <i class="ph ph-google-logo" style="color:#fff"></i> Google ile devam et
+          </div>
+          <div class="social-btn" style="margin-bottom:6px"><i class="ph ph-apple-logo"></i> Apple ile devam et</div>
+          <div class="terms-text">Devam ederek <u>Kullanım Şartları</u>'nı kabul etmiş olursunuz.</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">Giriş Yap</div>
+  </div>
+
+  <!-- ONBOARDING 1 -->
+  <div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="phone-notch"></div>
+        <div class="phone-status"><span>9:41</span><span>● ● ●</span></div>
+        <div class="screen-body">
+          <div class="onboard-hero">
+            <div class="onboard-illustration"><i class="ph ph-virus"></i></div>
+            <h2>Başarıyı<br>Dokunarak Öğren!</h2>
+            <p>5 farklı etkileşim moduyla biyolojiyi gerçekten anla, ezberle değil.</p>
+          </div>
+          <div class="page-dots">
+            <div class="dot active"></div>
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          </div>
+          <div class="onboard-feature">
+            <div class="icon-circle" style="width:28px;height:28px;font-size:13px;flex-shrink:0"><i class="ph ph-eye-slash"></i></div>
+            <div><strong>Buzlu Cam Modu</strong>Şema üzerindeki etiketleri keşfet</div>
+          </div>
+          <div class="onboard-feature">
+            <div class="icon-circle" style="width:28px;height:28px;font-size:13px;flex-shrink:0"><i class="ph ph-map-pin"></i></div>
+            <div><strong>Nokta Atışı</strong>Yapıları şemada doğru yere işaretle</div>
+          </div>
+          <div class="onboard-feature">
+            <div class="icon-circle" style="width:28px;height:28px;font-size:13px;flex-shrink:0"><i class="ph ph-sparkle"></i></div>
+            <div><strong>Parlayanı Bil</strong>Vurgulanan yapıyı 4 şıktan seç</div>
+          </div>
+          <div class="onboard-nav">
+            <div class="back-nav-btn"><i class="ph ph-arrow-left"></i></div>
+            <div class="page-dots" style="margin:0">
+              <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            </div>
+            <div class="next-btn">İleri <i class="ph ph-arrow-right"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">Onboarding — Tanıtım</div>
+  </div>
+
+  <!-- ONBOARDING 4 — Başla -->
+  <div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="phone-notch"></div>
+        <div class="phone-status"><span>9:41</span><span>● ● ●</span></div>
+        <div class="screen-body">
+          <div class="onboard-hero" style="padding-bottom:14px">
+            <div class="onboard-illustration"><i class="ph ph-target"></i></div>
+            <h2>Sınav Modunu<br>Seç ve Başla!</h2>
+            <p>İstediğin zaman değiştirebilirsin.</p>
+          </div>
+          <div class="page-dots">
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <div class="dot active"></div>
+          </div>
+          <div style="padding:0 12px">
+            <div style="display:flex;gap:8px;margin-bottom:10px">
+              <div style="flex:1;background:#fff;border-radius:14px;padding:12px;text-align:center;border:2px solid var(--green);box-shadow:0 2px 8px rgba(0,0,0,.08)">
+                <i class="ph ph-book-open" style="font-size:22px;color:var(--green);display:block;margin-bottom:6px"></i>
+                <div style="font-size:11px;font-weight:700">TYT</div>
+                <div style="font-size:9px;color:var(--text-sec)">Temel YKS</div>
+              </div>
+              <div style="flex:1;background:#fff;border-radius:14px;padding:12px;text-align:center;border:1.5px solid var(--border)">
+                <i class="ph ph-graduation-cap" style="font-size:22px;color:var(--text-sec);display:block;margin-bottom:6px"></i>
+                <div style="font-size:11px;font-weight:700">AYT</div>
+                <div style="font-size:9px;color:var(--text-sec)">İleri YKS</div>
+              </div>
+            </div>
+            <div style="background:var(--cream-dark);border-radius:12px;padding:10px 12px;margin-bottom:10px;display:flex;align-items:center;gap:8px">
+              <i class="ph ph-bell" style="font-size:18px;color:var(--green)"></i>
+              <div>
+                <div style="font-size:11px;font-weight:700">Günlük hatırlatıcı</div>
+                <div style="font-size:9px;color:var(--text-sec)">Her gün 20:00 — değiştirilebilir</div>
+              </div>
+              <div class="toggle on"></div>
+            </div>
+          </div>
+          <div class="btn-primary" style="margin-top:8px;width:calc(100% - 24px)">
+            <i class="ph ph-rocket-launch"></i> Hadi Başlayalım!
+          </div>
+          <div class="onboard-nav" style="border-top:none;padding-top:4px">
+            <div class="back-nav-btn"><i class="ph ph-arrow-left"></i></div>
+            <div class="page-dots" style="margin:0">
+              <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+              <div class="dot active"></div>
+            </div>
+            <div style="width:34px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">Onboarding — Başla</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════
+     SECTION 2 — ANA EKRANLAR
+═══════════════════════════════════ -->
+<div class="section-label">Ana Ekranlar</div>
+<div class="screens-row">
+
+  <!-- HOME -->
+  <div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="phone-notch"></div>
+        <div class="phone-status"><span>9:41</span><span>● ● ●</span></div>
+        <div class="screen-body">
+          <div class="home-greeting">
+            <div>
+              <h2><i class="ph ph-hand-waving"></i> Merhaba, Gezgin!</h2>
+              <p>Bugün hangi konuyu keşfedelim?</p>
+            </div>
+            <div class="avatar"><i class="ph ph-user-circle"></i></div>
+          </div>
+          <div class="progress-card">
+            <div class="pc-label"><i class="ph ph-trend-up"></i> Günlük İlerleme</div>
+            <div class="pc-value">12 / 20 <span style="font-size:12px;font-weight:400;opacity:.75">soru</span></div>
+            <div class="pc-bar"><div class="pc-fill" style="width:60%"></div></div>
+            <div style="font-size:9px;opacity:.7;margin-top:5px;display:flex;align-items:center;gap:4px">
+              <i class="ph ph-fire" style="font-size:11px"></i> 5 gün serisi · Hedefe 8 soru kaldı
+            </div>
+          </div>
+          <div class="section-header">
+            <span><i class="ph ph-clock-counter-clockwise" style="font-size:14px"></i> Kaldığın Yerden</span>
+            <a>Tümü</a>
+          </div>
+          <div class="chips-row">
+            <div class="topic-chip">
+              <i class="ph ph-cell-signal-full tc-icon"></i>
+              <div><div class="tc-label">Hücre Zarı</div><div class="tc-sub">9. Sınıf · %65</div></div>
+            </div>
+            <div class="topic-chip">
+              <i class="ph ph-dna tc-icon"></i>
+              <div><div class="tc-label">Mitoz Bölünme</div><div class="tc-sub">10. Sınıf · Yeni</div></div>
+            </div>
+          </div>
+          <div class="section-header">
+            <span><i class="ph ph-star" style="font-size:14px"></i> Önerilen</span>
+            <a>Daha fazla</a>
+          </div>
+          <div class="card" style="display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:8px">
+            <div class="icon-circle"><i class="ph ph-heartbeat"></i></div>
+            <div style="flex:1">
+              <div style="font-size:11px;font-weight:700">Sindirim Sistemi</div>
+              <div style="font-size:9px;color:var(--text-sec)">Zayıf olduğun konu · AYT</div>
+            </div>
+            <span class="pill">Başla</span>
+          </div>
+          <div class="section-header"><span><i class="ph ph-lightning" style="font-size:14px"></i> Hızlı Erişim</span></div>
+          <div class="quick-btns-row" style="margin-bottom:8px">
+            <div class="quick-btn">TYT</div>
+            <div class="quick-btn">AYT</div>
+            <div class="quick-btn">9. Sınıf</div>
+            <div class="quick-btn">10. Sınıf</div>
+          </div>
+          <div class="bottom-nav">
+            <div class="nav-item active"><i class="ph ph-house"></i>Ana Sayfa</div>
+            <div class="nav-item"><i class="ph ph-microscope"></i>Keşfet</div>
+            <div class="nav-item"><i class="ph ph-note-pencil"></i>Test</div>
+            <div class="nav-item"><i class="ph ph-chart-bar"></i>İlerleme</div>
+            <div class="nav-item"><i class="ph ph-gear"></i>Ayarlar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">Ana Sayfa</div>
+  </div>
+
+  <!-- EXPLORE LIST -->
+  <div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="phone-notch"></div>
+        <div class="phone-status"><span>9:41</span><span>● ● ●</span></div>
+        <div class="screen-body">
+          <div class="green-header">
+            <h2><i class="ph ph-microscope"></i> Keşfet</h2>
+            <p>Tüm konulara kategorize erişim</p>
+          </div>
+          <div class="explore-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input placeholder="Konu veya yapı ara..." readonly>
+          </div>
+          <div class="tab-bar">
+            <div class="tab-seg">
+              <div class="tab-item active"><i class="ph ph-buildings"></i> Sınıf</div>
+              <div class="tab-item"><i class="ph ph-exam"></i> Sınav</div>
+            </div>
+          </div>
+          <div style="padding:6px 0">
+            <div class="grade-section">
+              <div class="grade-header open">
+                <div class="grade-title"><i class="ph ph-book"></i> 9. Sınıf</div>
+                <i class="ph ph-caret-down"></i>
+              </div>
+              <div class="grade-topics">
+                <div class="topic-row"><div class="t-dot"></div><div class="t-name">Canlıların Temel Bileşenleri</div><i class="ph ph-check-circle"></i></div>
+                <div class="topic-row" style="background:#F6FAF0"><div class="t-dot active"></div><div class="t-name" style="font-weight:700">Hücre</div><span class="pill" style="font-size:8px">Devam</span></div>
+                <div class="topic-row"><div class="t-dot"></div><div class="t-name">Canlıların Sınıflandırılması</div></div>
+              </div>
+            </div>
+            <div class="grade-section" style="margin-top:6px">
+              <div class="grade-header">
+                <div class="grade-title"><i class="ph ph-book"></i> 10. Sınıf</div>
+                <i class="ph ph-caret-right"></i>
+              </div>
+            </div>
+            <div class="grade-section" style="margin-top:6px">
+              <div class="grade-header">
+                <div class="grade-title"><i class="ph ph-book"></i> 11. Sınıf</div>
+                <i class="ph ph-caret-right"></i>
+              </div>
+            </div>
+            <div class="grade-section" style="margin-top:6px">
+              <div class="grade-header">
+                <div class="grade-title"><i class="ph ph-book"></i> 12. Sınıf</div>
+                <i class="ph ph-caret-right"></i>
+              </div>
+            </div>
+          </div>
+          <div class="bottom-nav">
+            <div class="nav-item"><i class="ph ph-house"></i>Ana Sayfa</div>
+            <div class="nav-item active"><i class="ph ph-microscope"></i>Keşfet</div>
+            <div class="nav-item"><i class="ph ph-note-pencil"></i>Test</div>
+            <div class="nav-item"><i class="ph ph-chart-bar"></i>İlerleme</div>
+            <div class="nav-item"><i class="ph ph-gear"></i>Ayarlar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">Keşfet — Konu Listesi</div>
+  </div>
+
+  <!-- TOPIC DETAIL — Hücre Zarı -->
+  <div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="phone-notch"></div>
+        <div class="phone-status"><span>9:41</span><span>● ● ●</span></div>
+        <div class="screen-body">
+          <div class="topic-detail-header">
+            <i class="ph ph-arrow-left back-btn"></i>
+            <div>
+              <div style="font-size:14px;font-weight:700">Hücre Zarı</div>
+              <div style="font-size:9px;opacity:.75">9. Sınıf · Hücre</div>
+            </div>
+          </div>
+          <div class="topic-svg-preview">
+            <div class="svg-label">SVG Önizleme</div>
+            <div style="position:relative;width:140px;height:100px">
+              <div style="width:120px;height:90px;border-radius:50%;background:rgba(122,148,82,.2);border:2px solid var(--green-light);position:absolute;top:5px;left:10px;display:flex;align-items:center;justify-content:center">
+                <div style="width:30px;height:22px;border-radius:50%;background:rgba(78,96,53,.35);border:1.5px solid var(--green)"></div>
+              </div>
+              <div class="cell-pin" style="top:6px;left:0">Hücre Zarı</div>
+              <div class="cell-pin" style="bottom:10px;right:0">Çekirdek</div>
+              <div class="cell-pin" style="top:30px;right:2px">Ribozom</div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:8px">
+            <div class="card-title"><i class="ph ph-book-open"></i> Konu Özeti</div>
+            <div style="font-size:10px;line-height:1.6;color:var(--text-sec)">
+              Hücre zarı, hücreyi çevreleyen seçici geçirgen bir yapıdır. Fosfolipid çift tabakadan oluşur ve madde geçişini düzenler.
+            </div>
+          </div>
+          <div class="section-header" style="padding-top:8px">
+            <span><i class="ph ph-game-controller" style="font-size:14px"></i> Etkileşim Modları</span>
+          </div>
+          <div class="modes-grid">
+            <div class="mode-btn">
+              <i class="ph ph-eye-slash mb-icon"></i>
+              <div class="mb-info"><div class="mb-title">Keşfet ve Öğren</div><div class="mb-sub">Buzlu cam etiketleri aç</div></div>
+              <i class="ph ph-caret-right mb-arrow"></i>
+            </div>
+            <div class="mode-btn" style="border-left-color:var(--gold)">
+              <i class="ph ph-map-pin mb-icon" style="color:var(--gold)"></i>
+              <div class="mb-info"><div class="mb-title">Nokta Atışı</div><div class="mb-sub">Yapıyı şemada işaretle</div></div>
+              <i class="ph ph-caret-right mb-arrow"></i>
+            </div>
+            <div class="mode-btn" style="border-left-color:#2980B9">
+              <i class="ph ph-sparkle mb-icon" style="color:#2980B9"></i>
+              <div class="mb-info"><div class="mb-title">Parlayanı Bil</div><div class="mb-sub">4 şıktan doğruyu seç</div></div>
+              <i class="ph ph-caret-right mb-arrow"></i>
+            </div>
+            <div class="mode-btn" style="border-left-color:var(--red)">
+              <i class="ph ph-hand-grabbing mb-icon" style="color:var(--red)"></i>
+              <div class="mb-info"><div class="mb-title">Sürükle ve Bırak</div><div class="mb-sub">Etiketleri doğru yere sürükle</div></div>
+              <i class="ph ph-caret-right mb-arrow"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">Konu Detay — Hücre Zarı</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════
+     SECTION 3 — ETKİLEŞİM MODLARI
+═══════════════════════════════════ -->
+<div class="section-label">Etkileşim Modları</div>
+<div class="screens-row">
+
+  <!-- QUIZ 1 — Keşfet ve Öğren -->
+  <div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="phone-notch"></div>
+        <div class="phone-status"><span>9:41</span><span>● ● ●</span></div>
+        <div class="screen-body">
+          <div class="quiz-top">
+            <i class="ph ph-x quiz-close"></i>
+            <span class="quiz-counter">3 / 12</span>
+            <span class="quiz-timer"><i class="ph ph-timer"></i> 2:34</span>
+          </div>
+          <div class="quiz-progress"><div class="qp-fill" style="width:25%"></div></div>
+          <div class="quiz-mode-label"><i class="ph ph-eye-slash"></i> Keşfet ve Öğren</div>
+          <div class="quiz-canvas">
+            <div style="position:relative;width:150px;height:120px">
+              <div style="width:130px;height:100px;border-radius:50%;background:rgba(122,148,82,.18);border:2px solid var(--green-light);position:absolute;top:10px;left:10px;display:flex;align-items:center;justify-content:center">
+                <div style="width:32px;height:25px;border-radius:50%;background:rgba(78,96,53,.3);border:1.5px solid var(--green)"></div>
+              </div>
+              <div class="blur-tag revealed" style="top:4px;left:5px">Hücre Zarı</div>
+              <div class="blur-tag" style="top:4px;right:0">— — —</div>
+              <div class="blur-tag" style="bottom:12px;left:10px">— — —</div>
+              <div class="blur-tag revealed" style="bottom:8px;right:4px">Ribozom</div>
+            </div>
+          </div>
+          <div class="quiz-hint"><i class="ph ph-lightbulb"></i> Bulanık etiketlere dokun ve yapıları keşfet!</div>
+          <div style="padding:6px 12px">
+            <div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div>
+            <div style="font-size:9px;color:var(--text-sec);margin-top:4px;text-align:center">2 / 4 etiket keşfedildi</div>
+          </div>
+          <div class="btn-primary" style="opacity:.5;cursor:default">
+            Tamamla ve Devam <i class="ph ph-arrow-right"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">Keşfet ve Öğren</div>
+  </div>
+
+  <!-- QUIZ 2 — Nokta Atışı -->
+  <div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="phone-notch"></div>
+        <div class="phone-status"><span>9:41</span><span>● ● ●</span></div>
+        <div class="screen-body">
+          <div class="quiz-top">
+            <i class="ph ph-x quiz-close"></i>
+            <span class="quiz-counter">5 / 12</span>
+            <span class="quiz-timer"><i class="ph ph-timer"></i> 1:45</span>
+          </div>
+          <div class="quiz-progress"><div class="qp-fill" style="width:42%"></div></div>
+          <div class="quiz-mode-label"><i class="ph ph-map-pin" style="color:var(--gold)"></i> Nokta Atışı</div>
+          <div class="card" style="margin:6px 12px;padding:10px 12px;border-left:3px solid var(--gold)">
+            <div style="font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px">
+              <i class="ph ph-map-pin" style="color:var(--gold)"></i> "Miyelin Kılıf" nerede?
+            </div>
+            <div style="font-size:9px;color:var(--text-sec);margin-top:2px">Şemada dokunarak işaretle</div>
+          </div>
+          <div class="quiz-canvas" style="height:150px">
+            <div style="position:relative;width:160px;height:110px">
+              <div style="width:140px;height:30px;border-radius:4px;background:rgba(122,148,82,.2);border:2px solid var(--green-light);position:absolute;top:40px;left:10px">
+                <div style="position:absolute;top:-14px;left:10px;font-size:8px;color:var(--green);font-weight:600">Akson</div>
+                <div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;gap:3px;padding:3px">
+                  <div style="flex:1;background:rgba(78,96,53,.2);border-radius:2px"></div>
+                  <div style="flex:1;background:rgba(78,96,53,.2);border-radius:2px"></div>
+                  <div style="flex:1;background:rgba(78,96,53,.2);border-radius:2px"></div>
+                </div>
+              </div>
+              <i class="ph ph-map-pin pin-marker" style="top:18px;left:72px"></i>
+              <div style="position:absolute;top:2px;left:52px;font-size:8px;background:var(--gold);color:#fff;border-radius:4px;padding:2px 5px;font-weight:600">işaretlendi</div>
+            </div>
+          </div>
+          <div class="quiz-hint"><i class="ph ph-cursor-click"></i> Pini sürükleyerek konumunu ayarlayabilirsin</div>
+          <div class="btn-primary" style="margin-top:8px">
+            <i class="ph ph-check"></i> Cevabı Onayla
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">Nokta Atışı</div>
+  </div>
+
+  <!-- QUIZ 3 — Parlayanı Bil -->
+  <div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="phone-notch"></div>
+        <div class="phone-status"><span>9:41</span><span>● ● ●</span></div>
+        <div class="screen-body">
+          <div class="quiz-top">
+            <i class="ph ph-x quiz-close"></i>
+            <span class="quiz-counter">7 / 12</span>
+            <span class="quiz-timer"><i class="ph ph-timer"></i> 0:58</span>
+          </div>
+          <div class="quiz-progress"><div class="qp-fill" style="width:58%"></div></div>
+          <div class="quiz-mode-label"><i class="ph ph-sparkle" style="color:#2980B9"></i> Parlayanı Bil</div>
+          <div class="quiz-canvas">
+            <div style="position:relative;width:150px;height:120px">
+              <div style="width:130px;height:100px;border-radius:50%;background:rgba(122,148,82,.18);border:2px solid var(--green-light);position:absolute;top:10px;left:10px;display:flex;align-items:center;justify-content:center">
+                <div style="width:32px;height:25px;border-radius:50%;background:rgba(78,96,53,.3);border:1.5px solid var(--green);position:relative;display:flex;align-items:center;justify-content:center">
+                  <div class="glow-tag" style="width:36px;height:30px;border-radius:50%;top:-3px;left:-3px">
+                    <i class="ph ph-sparkle"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="quiz-hint" style="padding:6px 16px 4px">Bu yapının adı nedir?</div>
+          <div class="mcq-options">
+            <div class="mcq-option"><div class="opt-letter">A</div>Golgi Cisimciği</div>
+            <div class="mcq-option"><div class="opt-letter">B</div>Ribozom</div>
+            <div class="mcq-option correct"><div class="opt-letter">C</div>Hücre Çekirdeği <i class="ph ph-check" style="margin-left:auto;color:var(--green)"></i></div>
+            <div class="mcq-option"><div class="opt-letter">D</div>Mitokondri</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">Parlayanı Bil</div>
+  </div>
+
+  <!-- QUIZ 4 — Sürükle & Bırak -->
+  <div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="phone-notch"></div>
+        <div class="phone-status"><span>9:41</span><span>● ● ●</span></div>
+        <div class="screen-body">
+          <div class="quiz-top">
+            <i class="ph ph-x quiz-close"></i>
+            <span class="quiz-counter">9 / 12</span>
+            <span class="quiz-timer"><i class="ph ph-timer"></i> 3:20</span>
+          </div>
+          <div class="quiz-progress"><div class="qp-fill" style="width:75%"></div></div>
+          <div class="quiz-mode-label"><i class="ph ph-hand-grabbing" style="color:var(--red)"></i> Sürükle ve Bırak</div>
+          <div class="quiz-canvas" style="height:150px">
+            <div style="position:relative;width:160px;height:120px">
+              <div style="width:130px;height:95px;border-radius:50%;background:rgba(122,148,82,.15);border:2px solid var(--green-light);position:absolute;top:12px;left:15px">
+                <div class="drop-zone filled" style="top:6px;left:10px;width:52px;font-size:8px">Golgi</div>
+                <div class="drop-zone filled" style="top:6px;right:10px;width:52px;font-size:8px">Ribozom</div>
+                <div class="drop-zone" style="bottom:8px;left:10px;width:52px;font-size:8px">boş</div>
+                <div class="drop-zone" style="bottom:8px;right:10px;width:52px;font-size:8px">boş</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:4px 14px;font-size:10px;font-weight:700;color:var(--text-sec);display:flex;align-items:center;gap:4px">
+            <i class="ph ph-cards" style="font-size:13px"></i> Etiket Havuzu
+          </div>
+          <div class="drag-labels">
+            <div class="drag-label placed"><i class="ph ph-check"></i> Golgi</div>
+            <div class="drag-label placed"><i class="ph ph-check"></i> Ribozom</div>
+            <div class="drag-label"><i class="ph ph-dots-six-vertical" style="color:var(--text-sec)"></i> Çekirdek</div>
+            <div class="drag-label"><i class="ph ph-dots-six-vertical" style="color:var(--text-sec)"></i> Mitokondri</div>
+          </div>
+          <div class="btn-primary" style="margin-top:6px">
+            <i class="ph ph-check-circle"></i> Kontrol Et
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">Sürükle ve Bırak</div>
+  </div>
+
+  <!-- QUIZ 5 — Akış Tamamlama -->
+  <div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="phone-notch"></div>
+        <div class="phone-status"><span>9:41</span><span>● ● ●</span></div>
+        <div class="screen-body">
+          <div class="quiz-top">
+            <i class="ph ph-x quiz-close"></i>
+            <span class="quiz-counter">11 / 12</span>
+            <span class="quiz-timer"><i class="ph ph-timer"></i> 2:10</span>
+          </div>
+          <div class="quiz-progress"><div class="qp-fill" style="width:92%"></div></div>
+          <div class="quiz-mode-label"><i class="ph ph-arrows-clockwise"></i> Akış Tamamlama</div>
+          <div class="card" style="margin:4px 12px;padding:8px 12px">
+            <div style="font-size:10px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:5px">
+              <i class="ph ph-leaf" style="color:var(--green)"></i> Fotosentez Döngüsü
+            </div>
+            <div>
+              <div class="flow-node">1. Işık Enerjisi</div>
+              <div class="flow-arrow"><i class="ph ph-arrow-down"></i></div>
+              <div class="flow-node empty">2. Su Emilimi <i class="ph ph-check" style="font-size:10px"></i></div>
+              <div class="flow-arrow"><i class="ph ph-arrow-down"></i></div>
+              <div class="flow-node">3. Klorofil</div>
+              <div class="flow-arrow"><i class="ph ph-arrow-down"></i></div>
+              <div class="flow-node pending">4. Seç <i class="ph ph-caret-down" style="font-size:10px"></i></div>
+              <div class="flow-arrow"><i class="ph ph-arrow-down"></i></div>
+              <div class="flow-node">5. Glikoz</div>
+            </div>
+          </div>
+          <div style="padding:4px 14px;font-size:10px;font-weight:700;color:var(--text-sec)">Seçenekler</div>
+          <div style="padding:0 12px">
+            <div class="flow-option"><div class="radio unchecked"></div>ATP Üretimi</div>
+            <div class="flow-option selected"><div class="radio"></div>O₂ Salınımı</div>
+            <div class="flow-option"><div class="radio unchecked"></div>CO₂ Alımı</div>
+          </div>
+          <div class="btn-primary" style="margin-top:6px">
+            <i class="ph ph-check-circle"></i> Tamamla
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">Akış Tamamlama</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════
+     SECTION 4 — TEST & İLERLEME & PROFİL
+═══════════════════════════════════ -->
+<div class="section-label">Test &amp; İlerleme &amp; Profil</div>
+<div class="screens-row">
+
+  <!-- TEST CONFIG -->
+  <div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="phone-notch"></div>
+        <div class="phone-status"><span>9:41</span><span>● ● ●</span></div>
+        <div class="screen-body">
+          <div class="green-header">
+            <h2><i class="ph ph-note-pencil"></i> Deneme Oluştur</h2>
+            <p>Kendi deneme testini yapılandır</p>
+          </div>
+          <div style="padding:10px 12px 0">
+            <div class="card-title"><i class="ph ph-exam"></i> Sınav Tipi</div>
+            <div class="toggle-group">
+              <div class="toggle-chip active">TYT</div>
+              <div class="toggle-chip">AYT</div>
+            </div>
+            <div class="card-title" style="margin:10px 0 6px"><i class="ph ph-list-numbers"></i> Soru Sayısı</div>
+            <div class="num-options">
+              <div class="num-chip">10</div>
+              <div class="num-chip">20</div>
+              <div class="num-chip">30</div>
+              <div class="num-chip">40</div>
+              <div class="num-chip active">50</div>
+            </div>
+            <div class="card-title" style="margin:10px 0 4px"><i class="ph ph-game-controller"></i> Etkileşim Modları</div>
+            <div style="background:#fff;border-radius:12px;padding:4px 10px">
+              <div class="check-row"><div class="checkbox checked"><i class="ph ph-check"></i></div>Keşfet ve Öğren</div>
+              <div class="check-row"><div class="checkbox checked"><i class="ph ph-check"></i></div>Nokta Atışı</div>
+              <div class="check-row"><div class="checkbox checked"><i class="ph ph-check"></i></div>Parlayanı Bil</div>
+              <div class="check-row"><div class="checkbox unchecked"></div>Sürükle ve Bırak</div>
+              <div class="check-row"><div class="checkbox unchecked"></div>Akış Tamamlama</div>
+            </div>
+            <div class="card-title" style="margin:10px 0 4px"><i class="ph ph-funnel"></i> Konu Filtresi</div>
+            <div style="background:#fff;border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;font-size:11px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
+              <span>Tüm Konular</span><i class="ph ph-caret-down" style="color:var(--text-sec)"></i>
+            </div>
+          </div>
+          <div class="btn-primary" style="margin-top:12px">
+            <i class="ph ph-rocket-launch"></i> Denemeyi Başlat
+          </div>
+          <div class="bottom-nav">
+            <div class="nav-item"><i class="ph ph-house"></i>Ana Sayfa</div>
+            <div class="nav-item"><i class="ph ph-microscope"></i>Keşfet</div>
+            <div class="nav-item active"><i class="ph ph-note-pencil"></i>Test</div>
+            <div class="nav-item"><i class="ph ph-chart-bar"></i>İlerleme</div>
+            <div class="nav-item"><i class="ph ph-gear"></i>Ayarlar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">Deneme Oluştur</div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="phone-notch"></div>
+        <div class="phone-status"><span>9:41</span><span>● ● ●</span></div>
+        <div class="screen-body">
+          <div class="green-header">
+            <h2><i class="ph ph-chart-bar"></i> İlerleme Durumum</h2>
+            <p>Genel performans özeti</p>
+          </div>
+          <div class="stat-cards">
+            <div class="stat-card">
+              <i class="ph ph-check-circle s-icon"></i>
+              <div class="s-val">127</div><div class="s-lbl">Çözülen Soru</div>
+            </div>
+            <div class="stat-card">
+              <i class="ph ph-target s-icon"></i>
+              <div class="s-val">85%</div><div class="s-lbl">Başarı Oranı</div>
+            </div>
+            <div class="stat-card">
+              <i class="ph ph-fire s-icon"></i>
+              <div class="s-val">12</div><div class="s-lbl">Gün Serisi</div>
+            </div>
+          </div>
+          <div class="section-header" style="padding-top:10px">
+            <span><i class="ph ph-calendar" style="font-size:14px"></i> Haftalık Aktivite</span>
+          </div>
+          <div style="background:#fff;border-radius:12px;margin:4px 12px;overflow:hidden">
+            <div class="chart-bar-row">
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:70%"></div><div class="chart-day">Pzt</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:50%"></div><div class="chart-day">Sal</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:90%"></div><div class="chart-day">Çar</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar low" style="height:20%"></div><div class="chart-day">Per</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:80%"></div><div class="chart-day">Cum</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:60%"></div><div class="chart-day">Cmt</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar low" style="height:30%"></div><div class="chart-day">Paz</div></div>
+            </div>
+          </div>
+          <div class="section-header">
+            <span><i class="ph ph-target" style="font-size:14px"></i> Konu Performansı</span>
+          </div>
+          <div style="background:#fff;border-radius:12px;margin:4px 12px;overflow:hidden">
+            <div class="kpi-row">
+              <div class="kpi-name">Hücre Biyolojisi</div>
+              <div class="kpi-bar-bg"><div class="kpi-bar-fill" style="width:78%"></div></div>
+              <div class="kpi-pct">78%</div>
+            </div>
+            <div class="kpi-row">
+              <div class="kpi-name">Genetik <i class="ph ph-warning" style="color:var(--gold)"></i></div>
+              <div class="kpi-bar-bg"><div class="kpi-bar-fill warn" style="width:52%"></div></div>
+              <div class="kpi-pct warn">52%</div>
+            </div>
+            <div class="kpi-row">
+              <div class="kpi-name">Ekoloji <i class="ph ph-star" style="color:var(--green)"></i></div>
+              <div class="kpi-bar-bg"><div class="kpi-bar-fill" style="width:91%"></div></div>
+              <div class="kpi-pct">91%</div>
+            </div>
+          </div>
+          <div class="section-header">
+            <span><i class="ph ph-trophy" style="font-size:14px"></i> Rozetler</span>
+          </div>
+          <div class="badge-row">
+            <div class="badge-item"><i class="ph ph-microscope badge-icon"></i><div class="badge-name">Araştırmacı</div></div>
+            <div class="badge-item"><i class="ph ph-dna badge-icon"></i><div class="badge-name">Genetikçi</div></div>
+            <div class="badge-item"><i class="ph ph-plant badge-icon"></i><div class="badge-name">Ekolog</div></div>
+            <div class="badge-item"><i class="ph ph-lock badge-icon locked"></i><div class="badge-name">Kilitli</div></div>
+            <div class="badge-item"><i class="ph ph-lock badge-icon locked"></i><div class="badge-name">Kilitli</div></div>
+          </div>
+          <div class="bottom-nav">
+            <div class="nav-item"><i class="ph ph-house"></i>Ana Sayfa</div>
+            <div class="nav-item"><i class="ph ph-microscope"></i>Keşfet</div>
+            <div class="nav-item"><i class="ph ph-note-pencil"></i>Test</div>
+            <div class="nav-item active"><i class="ph ph-chart-bar"></i>İlerleme</div>
+            <div class="nav-item"><i class="ph ph-gear"></i>Ayarlar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">İlerleme</div>
+  </div>
+
+  <!-- PROFILE & SETTINGS -->
+  <div>
+    <div class="phone">
+      <div class="phone-inner">
+        <div class="phone-notch"></div>
+        <div class="phone-status"><span>9:41</span><span>● ● ●</span></div>
+        <div class="screen-body">
+          <div class="profile-hero">
+            <div class="profile-edit-btn"><i class="ph ph-pencil-simple"></i> Düzenle</div>
+            <div class="profile-avatar"><i class="ph ph-user-circle"></i></div>
+            <h2>Gezgin</h2>
+            <p>gezgin@email.com</p>
+            <div style="display:flex;gap:6px;justify-content:center;margin-top:8px">
+              <span class="pill" style="background:rgba(255,255,255,.2);color:#fff">TYT</span>
+              <span class="pill" style="background:rgba(255,255,255,.2);color:#fff">2026 YKS</span>
+            </div>
+          </div>
+          <div class="profile-stats">
+            <div class="profile-stat"><div class="ps-val">127</div><div class="ps-lbl">Çözülen</div></div>
+            <div class="profile-stat"><div class="ps-val">85%</div><div class="ps-lbl">Başarı</div></div>
+            <div class="profile-stat"><div class="ps-val">12</div><div class="ps-lbl">Gün Serisi</div></div>
+          </div>
+          <div class="settings-group" style="margin-top:18px">
+            <div class="settings-label">Genel</div>
+            <div class="settings-item"><i class="ph ph-bell si-icon"></i>Bildirimler<div class="toggle on"></div></div>
+            <div class="settings-item"><i class="ph ph-device-mobile si-icon"></i>Haptic Feedback<div class="toggle on"></div></div>
+            <div class="settings-item"><i class="ph ph-moon si-icon"></i>Karanlık Mod<div class="toggle off"></div></div>
+          </div>
+          <div class="settings-group" style="margin-top:8px">
+            <div class="settings-label">Hesap</div>
+            <div class="settings-item"><i class="ph ph-upload-simple si-icon"></i>Verileri Dışa Aktar<i class="ph ph-caret-right si-arrow"></i></div>
+            <div class="settings-item" style="color:var(--red)"><i class="ph ph-sign-out si-icon" style="color:var(--red)"></i>Çıkış Yap<i class="ph ph-caret-right si-arrow"></i></div>
+          </div>
+          <div class="bottom-nav">
+            <div class="nav-item"><i class="ph ph-house"></i>Ana Sayfa</div>
+            <div class="nav-item"><i class="ph ph-microscope"></i>Keşfet</div>
+            <div class="nav-item"><i class="ph ph-note-pencil"></i>Test</div>
+            <div class="nav-item"><i class="ph ph-chart-bar"></i>İlerleme</div>
+            <div class="nav-item active"><i class="ph ph-gear"></i>Ayarlar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-label">Profil &amp; Ayarlar</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════
+     FOOTER
+═══════════════════════════════════ -->
+<div class="page-footer">
+  <strong>YKS İnteraktif Biyoloji Atlası</strong> &nbsp;·&nbsp; @HARGET Mobil Departmanı &nbsp;·&nbsp; 2026<br>
+  <span style="font-size:10px;opacity:.6">14 ekran &nbsp;·&nbsp; 5 etkileşim modu &nbsp;·&nbsp; Tüm navigasyon akışları</span>
+</div>
+
+</body>
+</html>
