@@ -4,30 +4,60 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 
 class ExploreScreen extends StatefulWidget {
-  const ExploreScreen({super.key});
+  final int initialTabIndex;
+
+  const ExploreScreen({
+    super.key,
+    this.initialTabIndex = 0,
+  });
 
   @override
   State<ExploreScreen> createState() => _ExploreScreenState();
 }
 
-class _ExploreScreenState extends State<ExploreScreen> {
+class _ExploreScreenState extends State<ExploreScreen>
+    with SingleTickerProviderStateMixin {
   String _searchQuery = '';
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(
+      length: 3,
+      vsync: this,
+      initialIndex: widget.initialTabIndex,
+    );
+  }
+
+  @override
+  void didUpdateWidget(ExploreScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialTabIndex != oldWidget.initialTabIndex) {
+      _tabController.animateTo(widget.initialTabIndex);
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Konular'),
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: 'Tümü'),
-              Tab(text: 'TYT'),
-              Tab(text: 'AYT'),
-            ],
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Konular'),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: 'Tümü'),
+            Tab(text: 'TYT'),
+            Tab(text: 'AYT'),
+          ],
         ),
+      ),
         body: Column(
           children: [
             Padding(
@@ -35,7 +65,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
               child: TextField(
                 decoration: const InputDecoration(
                   hintText: 'Konu ara...',
-prefixIcon: Icon(Icons.search),                     
+                  prefixIcon: Icon(Icons.search),
                 ),
                 onChanged: (value) {
                   setState(() {
@@ -46,6 +76,7 @@ prefixIcon: Icon(Icons.search),
             ),
             Expanded(
               child: TabBarView(
+                controller: _tabController,
                 children: [
                   _buildTopicGrid(_getFilteredTopics('All')),
                   _buildTopicGrid(_getFilteredTopics('TYT')),
@@ -55,8 +86,7 @@ prefixIcon: Icon(Icons.search),
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 
   List<Map<String, dynamic>> _getFilteredTopics(String type) {

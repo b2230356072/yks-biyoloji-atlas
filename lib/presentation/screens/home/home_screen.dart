@@ -98,7 +98,7 @@ class HomeScreen extends StatelessWidget {
                     child: _QuickAccessCard(
                       title: 'TYT',
                       icon: Icons.school,
-                      onTap: () => context.go('/explore'),
+                      onTap: () => context.go('/explore?tab=tyt'),
                     ),
                   ),
                   const SizedBox(width: AppSpacing.md),
@@ -106,7 +106,7 @@ class HomeScreen extends StatelessWidget {
                     child: _QuickAccessCard(
                       title: 'AYT',
                       icon: Icons.science,
-                      onTap: () => context.go('/explore'),
+                      onTap: () => context.go('/explore?tab=ayt'),
                     ),
                   ),
                 ],

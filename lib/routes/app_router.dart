@@ -65,7 +65,17 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: '/explore',
-                builder: (context, state) => const ExploreScreen(),
+                builder: (context, state) {
+                  final String? tab = state.uri.queryParameters['tab'];
+                  int initialIndex = 0;
+                  if (tab == 'tyt') {
+                    initialIndex = 1;
+                  } else if (tab == 'ayt') {
+                    initialIndex = 2;
+                  }
+
+                  return ExploreScreen(initialTabIndex: initialIndex);
+                },
               ),
             ],
           ),
