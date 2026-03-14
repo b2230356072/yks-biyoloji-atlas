@@ -33,8 +33,7 @@ class TopicDetailScreen extends StatelessWidget {
                     SizedBox(height: AppSpacing.sm),
                     Text(
                       'SVG Diyagram burada görünecek',
-                      style:
-                          TextStyle(fontSize: 14, color: AppColors.textHint),
+                      style: TextStyle(fontSize: 14, color: AppColors.textHint),
                     ),
                   ],
                 ),
@@ -59,8 +58,7 @@ class TopicDetailScreen extends StatelessWidget {
                   },
                   tileColor: AppColors.surface,
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(AppSpacing.radiusMd),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                     side: const BorderSide(color: AppColors.border),
                   ),
                   leading:
@@ -82,5 +80,9 @@ const _modes = [
   {'id': 'pinpoint', 'title': 'Nokta Atışı', 'icon': Icons.my_location},
   {'id': 'glow', 'title': 'Parlayanı Bil', 'icon': Icons.lightbulb_outline},
   {'id': 'dragdrop', 'title': 'Sürükle Bırak', 'icon': Icons.drag_indicator},
-  {'id': 'flow', 'title': 'Akış Tamamlama', 'icon': Icons.account_tree_outlined},
+  {
+    'id': 'flow',
+    'title': 'Akış Tamamlama',
+    'icon': Icons.account_tree_outlined
+  },
 ];
